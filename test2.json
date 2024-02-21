@@ -1,1 +1,14 @@
-{"name":  "bob", "age":  15, "gender":  "male", "hired":  false, "job":  {"title":  "student", "records":  {"number":  5}}, "flights":  [1]}
+{
+            "id": "b52d1079-1067-411a-ba94-0e3e360ddc96",
+            "name": "Dorm Decor",
+            "analytics_name": "dorm_decor",
+            "membership_type": "non_member",
+            "color": "#0054D1",
+            "should_show_leaderboard": true,
+            "group_join_type": "open",
+            "group_visibility": "public_to_schools",
+            "description": "Share and get inspired ",
+            "icon_url": "https://sidechat-icon-assets-prod.s3.amazonaws.com/IMG_0288.png",
+            "asset_library_visibility": "show",
+            "member_count": 695579
+        }
