@@ -39,7 +39,8 @@ class ArgumentCodeBlock:
             type_hint = self.type_hint.__name__
         else:
             type_hint = self.type_hint
-        result = indent + self.name + f": {type_hint} {field_str}\n"
+        with_dict = "dict | " if isinstance(self.type_hint, str) else ""
+        result = indent + self.name + f": {with_dict}{type_hint} {field_str}\n"
         return result
 
 
