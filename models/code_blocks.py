@@ -1,27 +1,7 @@
+from .extra import FieldInput, EmptyValue
+from .input_blocks import *
 from dataclasses import dataclass, field
 from typing import *
-"""
-needed code blocks:
-Class block
-argument block
-
-"""
-
-class EmptyValue:
-    def __init__(self):
-        ...
-
-@dataclass
-class FieldInput:
-    repr: bool = field(default=True)
-    init: bool = field(default=True)
-    hash: bool = field(default=False)
-    compare: bool = field(default=False)
-    default: Any = field(default_factory=EmptyValue)
-
-    def __post_init__(self):
-        if isinstance(self.default, str):
-            self.default = f'"{self.default}"'
 
 
 class ArgumentCodeBlock:
@@ -63,7 +43,7 @@ class ArgumentCodeBlock:
         return result
 
 
-class ClassCodeBlock():
+class ClassCodeBlock:
     def __init__(self, name: str, blocks: List[ArgumentCodeBlock]):
         self.name = name.capitalize()
         self.head = "@dataclass\nclass " + self.name
@@ -79,21 +59,6 @@ class ClassCodeBlock():
                 result += indent + block.__str__(indent) + "\n"
         return result
 
-@dataclass
-class RegularImport:
-    package_name: str
-
-    def __str__(self):
-        return f"import {self.package_name}\n"
-
-
-@dataclass
-class FromImport:
-    parent_package_name: str
-    packages: List[str]
-
-    def __str__(self):
-        return f"from {self.parent_package_name} import {', '.join(self.packages)}\n"
 
 @dataclass
 class FileCodeBlock:
@@ -110,4 +75,3 @@ class FileCodeBlock:
 
         result += self.main_object.__str__(indent) + "\n"
         return result
-

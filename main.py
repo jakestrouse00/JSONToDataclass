@@ -1,5 +1,4 @@
-from pydantic.dataclasses import dataclass, Field
-from extra import *
+from models import *
 import json
 
 
