@@ -73,7 +73,9 @@ class Person:
 When you want to initialize an instance of Person with some json data this is how you would do it:
 
 ```python
-unfiltered_data = {"name":  "bob", "age":  15, "gender":  "male", "hired":  False, "hair_color": "brown"}  # this json data contains the additional argument hair_color which will not be accepted by the dataclass and result in an exception
+unfiltered_data = {"name":  "bob", "age":  15, "gender":  "male", "hired":  False, "hair_color": "brown"}  
+# unfiltered_data contains the additional argument hair_color which will result in an exception if unpacked into 
+# the Person object directly. We need to filter it first.
 filtered_data = Person.convert_data(unfiltered_data)
 # then just create a new instance of Person by unpacking the filtered json data
 person_object = Person(**filtered_data)
