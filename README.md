@@ -12,7 +12,7 @@ This tool is intended to be used when creating Python wrappers around unofficial
 - Supports Nested Dictionaries: Dynamically creates additional objects if there are nested dictionaries.
 - Utilities for data conversion: Created Python objects automatically are given a static method to filter json data by the object's arguments. Static method can either return a dictionary containing the filtered arguments, or an initiated instance of the object.
 ## Requirements
-To use JSONToDataclass, you need to have Python 3.6+ installed along with the following dependencies:
+To use JSONToDataclass, you need to have Python 3.10 installed along with the following dependencies:
 
 - pydantic
 You can install all required dependencies by running:
