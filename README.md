@@ -15,6 +15,7 @@ This tool is intended to be used when creating Python wrappers around unofficial
 To use JSONToDataclass, you need to have Python 3.10 installed along with the following dependencies:
 
 - pydantic
+
 You can install all required dependencies by running:
 
 ```commandline
