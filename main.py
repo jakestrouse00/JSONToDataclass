@@ -1,8 +1,7 @@
 from models import *
 import json
 import argparse
-
-
+import sys
 
 
 def load_file(file: str) -> dict:
@@ -29,7 +28,8 @@ def create_object(name: str, arguments: List[ArgumentCodeBlock], static_method_t
     return ClassCodeBlock(f"{name}", arguments, static_method_type)
 
 
-def d2_process_json(data: dict, static_method_type: StaticMethods, field: FieldInput | None = None) -> Tuple[List[ArgumentCodeBlock], List[ClassCodeBlock]]:
+def d2_process_json(data: dict, static_method_type: StaticMethods, field: FieldInput | None = None) -> Tuple[
+    List[ArgumentCodeBlock], List[ClassCodeBlock]]:
     # d2 = a dict with 1 dict inside of it
     fields: List[ArgumentCodeBlock] = []
     child_classes = []
@@ -49,22 +49,33 @@ def d2_process_json(data: dict, static_method_type: StaticMethods, field: FieldI
     return fields, child_classes
 
 
-def json_to_code(object_name: str, data: dict, field: FieldInput | None = None, static_method_type: StaticMethods = StaticMethods.json_out) -> FileCodeBlock:
+def json_to_code(object_name: str, data: dict, field: FieldInput | None = None,
+                 static_method_type: StaticMethods = StaticMethods.json_out) -> FileCodeBlock:
     args = d2_process_json(data, static_method_type, field=field)
     test_obj = create_object(object_name, args[0], static_method_type)
-    code = FileCodeBlock(main_object=test_obj, child_objects=args[1], imports=[FromImport("__future__", ["annotations"]), FromImport("pydantic.dataclasses", ["dataclass", "Field"])])
+    code = FileCodeBlock(main_object=test_obj, child_objects=args[1],
+                         imports=[FromImport("__future__", ["annotations"]),
+                                  FromImport("pydantic.dataclasses", ["dataclass", "Field"])])
     return code
+
+
+
 
 
 parser = argparse.ArgumentParser(description='Script to make pydantic dataclasses from json data')
 parser.add_argument('object_name', type=str, help='Name of the object')
 parser.add_argument('--file', type=str, default=None, help='JSON file')
 parser.add_argument('--json', type=str, default=None, help='JSON data')
-parser.add_argument('--output', type=str, default="testing", help='File name for outputted code')
+parser.add_argument('--output_file', type=str, default="testing", help='File name for outputted code')
 parser.add_argument('--repr', action='store_false', default=True, help='Display arguments in repr')
-parser.add_argument('--static_method', default="json_out", type=str, help="Switches output of static methods from json to object", choices=["json_out", "object_out"])
+parser.add_argument('--static_method', default="json_out", type=str,
+                    help="Switches output of static methods from json to object", choices=["json_out", "object_out"])
 
-args = parser.parse_args()
+if len(sys.argv) > 1:
+    args = parser.parse_args()
+else:
+    config_dict = load_config()
+    args = ConfigArgs(**config_dict)
 
 if args.file is None and args.json is None:
     raise "'--file' or '--json' must not be None"
@@ -79,5 +90,5 @@ else:
 x = FieldInput(repr=args.repr)
 code = json_to_code(args.object_name, json_data, x, static_method_type=StaticMethods[args.static_method])
 # print(code)
-output_file = write_file(args.output, code)
+output_file = write_file(args.output_file, code)
 print(f"Objects created: {len(code.child_objects) + 1}\nSaved to: {output_file}")
