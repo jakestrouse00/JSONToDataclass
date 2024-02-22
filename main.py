@@ -10,9 +10,10 @@ def load_file(file: str) -> dict:
         return json.load(f)
 
 
-def write_file(file_name: str, data: FileCodeBlock):
+def write_file(file_name: str, data: FileCodeBlock) -> str:
     with open(f"outputs/{file_name}.py", "w") as f:
         f.write(data.__str__())
+    return f"outputs/{file_name}.py"
 
 
 def d1_process_json(data: dict):
@@ -48,10 +49,10 @@ def d2_process_json(data: dict, field: FieldInput | None = None) -> Tuple[List[A
     return fields, child_classes
 
 
-def json_to_code(data: dict, field: FieldInput | None = None) -> FileCodeBlock:
+def json_to_code(object_name: str, data: dict, field: FieldInput | None = None) -> FileCodeBlock:
     args = d2_process_json(data, field=field)
-    test_obj = ClassCodeBlock("Person", args[0])
-    code = FileCodeBlock(main_object=test_obj, child_objects=args[1], imports=[FromImport("pydantic.dataclasses", ["dataclass", "Field"])])
+    test_obj = ClassCodeBlock(object_name, args[0])
+    code = FileCodeBlock(main_object=test_obj, child_objects=args[1], imports=[FromImport("__future__", ["annotations"]), FromImport("pydantic.dataclasses", ["dataclass", "Field"])])
     return code
 
 
@@ -75,7 +76,7 @@ else:
     raise "'--file' or '--json' must not be None"
 
 x = FieldInput(repr=args.repr)
-print(x)
-code = json_to_code(json_data, x)
+code = json_to_code(args.object_name, json_data, x)
 # print(code)
-write_file(args.output, code)
+output_file = write_file(args.output, code)
+print(f"Objects created: {len(code.child_objects) + 1}\nSaved to: {output_file}")

@@ -10,7 +10,7 @@ class RegularImport:
     package_name: str
 
     def __str__(self):
-        return f"import {self.package_name}\n"
+        return f"import {self.package_name}"
 
 
 @dataclass
@@ -19,4 +19,4 @@ class FromImport:
     packages: List[str]
 
     def __str__(self):
-        return f"from {self.parent_package_name} import {', '.join(self.packages)}\n"
+        return f"from {self.parent_package_name} import {', '.join(self.packages)}"

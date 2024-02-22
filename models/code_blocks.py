@@ -6,7 +6,7 @@ from typing import *
 
 class ArgumentCodeBlock:
     def __init__(self, name: str, type_hint: type, field: FieldInput | None):
-        self.name = name
+        self.name = name.replace(" ", "")
         self.type_hint = type_hint
         self.field = field
 
@@ -53,9 +53,10 @@ class ArgumentCodeBlock:
 
 class ClassCodeBlock:
     def __init__(self, name: str, blocks: List[ArgumentCodeBlock]):
-        self.name = name.capitalize()
+        self.name = name.title().replace(" ", "")
         self.head = "@dataclass\nclass " + self.name
         self.blocks = blocks
+        self.static_method = '\n    @staticmethod\n    def convert_data(input_data: dict) -> dict:\n        new_data = {}\n        for index, (key, value) in enumerate(input_data.items()):\n            '+f'if key in list({self.name}.__annotations__.keys()):\n                new_data[key] = value\n        return new_data'
 
     def __str__(self, indent=""):
         result = indent + self.head + ":\n"
@@ -65,6 +66,7 @@ class ClassCodeBlock:
                 result += block.__str__(indent)
             else:
                 result += indent + block.__str__(indent) + "\n"
+        result += indent + self.static_method + "\n"
         return result
 
 
@@ -78,8 +80,9 @@ class FileCodeBlock:
         result = ""
         for import_statement in self.imports:
             result += import_statement.__str__() + "\n"
+        result += "\n\n"
         for child in self.child_objects:
-            result += child.__str__(indent) + "\n"
-
+            result += child.__str__(indent) + "\n\n"
+        # result += "\n"
         result += self.main_object.__str__(indent) + "\n"
         return result
