@@ -10,7 +10,7 @@ class ArgumentCodeBlock:
         self.type_hint = type_hint
         self.field = field
 
-    def compose_field(self) -> str:
+    def compose_field(self) -> str | None:
         temp_str = ""
         if not self.field.repr:
             temp_str += f"repr={self.field.repr},"
@@ -26,13 +26,20 @@ class ArgumentCodeBlock:
             temp_str = temp_str[:-1]
         if temp_str.startswith(","):
             temp_str = temp_str[1:]
-        return f"Field({temp_str})"
+        if len(temp_str) == 0:
+            return None
+        else:
+            return f"Field({temp_str})"
         # return f"Field(repr={self.field.repr}, init={self.field.init}, hash={self.field.hash}, compare={self.field.compare}{default_str})"
 
     def __str__(self, indent=""):
 
         if isinstance(self.field, FieldInput):
-            field_str = f"= {self.compose_field()}"
+            composed_field = self.compose_field()
+            if composed_field is not None:
+                field_str = f"= {self.compose_field()}"
+            else:
+                field_str = ""
         else:
             field_str = ""
         if isinstance(self.type_hint, type):

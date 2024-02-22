@@ -75,7 +75,7 @@ else:
     raise "'--file' or '--json' must not be None"
 
 x = FieldInput(repr=args.repr)
-
+print(x)
 code = json_to_code(json_data, x)
 # print(code)
 write_file(args.output, code)
