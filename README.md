@@ -29,6 +29,7 @@ Command Line Arguments
 - --json: JSON string to be converted.
 - --object_name: Name of the resulting data class.
 - --output_file: (Optional) Name of the output python file (excluding the `.py`) to save the generated data class code. Defaults to `testing`
+- --static_method: (Optional) type of static method to include. Defaults to `json_out`
 ## Run Example
 
 ```commandline
