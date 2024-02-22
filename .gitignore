@@ -1,7 +1,6 @@
 # project specific
 outputs/*.py
-test*.py
-test.py
+tes*.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
