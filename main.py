@@ -25,18 +25,18 @@ def d1_process_json(data: dict):
     return fields
 
 
-def create_object(name: str, arguments: List[ArgumentCodeBlock]) -> ClassCodeBlock:
-    return ClassCodeBlock(f"{name}", arguments)
+def create_object(name: str, arguments: List[ArgumentCodeBlock], static_method_type: StaticMethods) -> ClassCodeBlock:
+    return ClassCodeBlock(f"{name}", arguments, static_method_type)
 
 
-def d2_process_json(data: dict, field: FieldInput | None = None) -> Tuple[List[ArgumentCodeBlock], List[ClassCodeBlock]]:
+def d2_process_json(data: dict, static_method_type: StaticMethods, field: FieldInput | None = None) -> Tuple[List[ArgumentCodeBlock], List[ClassCodeBlock]]:
     # d2 = a dict with 1 dict inside of it
     fields: List[ArgumentCodeBlock] = []
     child_classes = []
     for index, (key, value) in enumerate(data.items()):
         if isinstance(value, dict):
-            child_object_data = d2_process_json(value, field=field)
-            child_object = create_object(key, child_object_data[0])
+            child_object_data = d2_process_json(value, static_method_type, field=field)
+            child_object = create_object(key, child_object_data[0], static_method_type)
             for obj in child_object_data[1]:
                 child_classes.append(obj)
             child_classes.append(child_object)
@@ -49,9 +49,9 @@ def d2_process_json(data: dict, field: FieldInput | None = None) -> Tuple[List[A
     return fields, child_classes
 
 
-def json_to_code(object_name: str, data: dict, field: FieldInput | None = None) -> FileCodeBlock:
-    args = d2_process_json(data, field=field)
-    test_obj = ClassCodeBlock(object_name, args[0])
+def json_to_code(object_name: str, data: dict, field: FieldInput | None = None, static_method_type: StaticMethods = StaticMethods.json_out) -> FileCodeBlock:
+    args = d2_process_json(data, static_method_type, field=field)
+    test_obj = create_object(object_name, args[0], static_method_type)
     code = FileCodeBlock(main_object=test_obj, child_objects=args[1], imports=[FromImport("__future__", ["annotations"]), FromImport("pydantic.dataclasses", ["dataclass", "Field"])])
     return code
 
@@ -62,6 +62,7 @@ parser.add_argument('--file', type=str, default=None, help='JSON file')
 parser.add_argument('--json', type=str, default=None, help='JSON data')
 parser.add_argument('--output', type=str, default="testing", help='File name for outputted code')
 parser.add_argument('--repr', action='store_false', default=True, help='Display arguments in repr')
+parser.add_argument('--static_method', default="json_out", type=str, help="Switches output of static methods from json to object", choices=["json_out", "object_out"])
 
 args = parser.parse_args()
 
@@ -76,7 +77,7 @@ else:
     raise "'--file' or '--json' must not be None"
 
 x = FieldInput(repr=args.repr)
-code = json_to_code(args.object_name, json_data, x)
+code = json_to_code(args.object_name, json_data, x, static_method_type=StaticMethods[args.static_method])
 # print(code)
 output_file = write_file(args.output, code)
 print(f"Objects created: {len(code.child_objects) + 1}\nSaved to: {output_file}")

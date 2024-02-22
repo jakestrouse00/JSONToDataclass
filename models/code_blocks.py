@@ -1,4 +1,4 @@
-from .extra import FieldInput, EmptyValue
+from .extra import FieldInput, EmptyValue, StaticMethods
 from .input_blocks import *
 from dataclasses import dataclass, field
 from typing import *
@@ -52,11 +52,16 @@ class ArgumentCodeBlock:
 
 
 class ClassCodeBlock:
-    def __init__(self, name: str, blocks: List[ArgumentCodeBlock]):
+    def __init__(self, name: str, blocks: List[ArgumentCodeBlock], static_method_type: StaticMethods):
         self.name = name.title().replace(" ", "")
         self.head = "@dataclass\nclass " + self.name
         self.blocks = blocks
-        self.static_method = '\n    @staticmethod\n    def convert_data(input_data: dict) -> dict:\n        new_data = {}\n        for index, (key, value) in enumerate(input_data.items()):\n            '+f'if key in list({self.name}.__annotations__.keys()):\n                new_data[key] = value\n        return new_data'
+        if static_method_type.name == "json_out":
+            self.static_method = static_method_type.value.format({}, self.name)
+        elif static_method_type.name == "object_out":
+            self.static_method = static_method_type.value.format(self.name, {}, self.name, self.name)
+        else:
+            raise "invalid static_method_type"
 
     def __str__(self, indent=""):
         result = indent + self.head + ":\n"
