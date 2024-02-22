@@ -1,5 +1,7 @@
 from models import *
 import json
+import argparse
+
 
 
 
@@ -45,7 +47,7 @@ def d2_process_json(data: dict, field: FieldInput | None = None) -> Tuple[List[A
 
     return fields, child_classes
 
-#
+
 def json_to_code(data: dict, field: FieldInput | None = None) -> FileCodeBlock:
     args = d2_process_json(data, field=field)
     test_obj = ClassCodeBlock("Person", args[0])
@@ -53,6 +55,27 @@ def json_to_code(data: dict, field: FieldInput | None = None) -> FileCodeBlock:
     return code
 
 
-file = load_file("test2.json")
-code = json_to_code(file, FieldInput(repr=False))
-write_file("testing", code)
+parser = argparse.ArgumentParser(description='Script to make pydantic dataclasses from json data')
+parser.add_argument('object_name', type=str, help='Name of the object')
+parser.add_argument('--file', type=str, default=None, help='JSON file')
+parser.add_argument('--json', type=str, default=None, help='JSON data')
+parser.add_argument('--output', type=str, default="testing", help='File name for outputted code')
+parser.add_argument('--repr', action='store_false', default=True, help='Display arguments in repr')
+
+args = parser.parse_args()
+
+if args.file is None and args.json is None:
+    raise "'--file' or '--json' must not be None"
+
+if args.json is not None:
+    json_data = json.loads(args.json)
+elif args.file is not None:
+    json_data = load_file(args.file)
+else:
+    raise "'--file' or '--json' must not be None"
+
+x = FieldInput(repr=args.repr)
+
+code = json_to_code(json_data, x)
+# print(code)
+write_file(args.output, code)
