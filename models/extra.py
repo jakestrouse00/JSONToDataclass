@@ -16,22 +16,30 @@ class EmptyValue:
         ...
 
 
+
 @dataclass
 class FieldInput:
     repr: bool = field(default=True)
     init: bool = field(default=True)
     hash: bool = field(default=False)
     compare: bool = field(default=False)
+    validation_alias: str = field(default_factory=EmptyValue)
+    union_mode: str = field(default_factory=EmptyValue)
     default: Any = field(default_factory=EmptyValue)
 
     def __post_init__(self):
         if isinstance(self.default, str):
             self.default = f'"{self.default}"'
 
+        if isinstance(self.validation_alias, str):
+            self.validation_alias = f'"{self.validation_alias}"'
 
-class StaticMethods(str, Enum):
-    json_out = '\n    @staticmethod\n    def convert_data(input_data: dict) -> dict:\n        new_data = {}\n        for index, (key, value) in enumerate(input_data.items()):\n            ' + 'if key in list({}.__annotations__.keys()):\n                new_data[key] = value\n        return new_data'
-    object_out = '\n    @staticmethod\n    def convert_data(input_data: dict) -> {}:\n        new_data = {}\n        for index, (key, value) in enumerate(input_data.items()):\n            if key in list({}.__annotations__.keys()):\n                new_data[key] = value\n        return {}(**new_data)'
+        if isinstance(self.union_mode, str):
+            self.union_mode = f'"{self.union_mode}"'
+
+
+
+
 
 
 def load_config():

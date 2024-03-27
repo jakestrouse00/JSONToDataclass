@@ -1,0 +1,18 @@
+{
+  "userId": "kny5xgtzsda",
+  "username": "testuser_influx",
+  "status": "CONFIRMED",
+  "accountType": "INDIVIDUAL",
+  "registrationMarketplaceId": "EBAY_US",
+  "individualAccount": {
+    "firstName": "TestFirst",
+    "lastName": "TestLast",
+    "email": "e.xa.mple@gmail.com",
+    "primaryPhone": {
+      "countryCode": "US",
+      "number": "0000000000",
+      "phoneType": "MOBILE"
+    }
+  }
+}
+
