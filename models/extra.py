@@ -63,7 +63,6 @@ class ConfigArgs:
     json: str | None
 
     output_file: str
-    static_method: str
 
     repr: bool
 
